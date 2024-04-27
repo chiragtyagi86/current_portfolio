@@ -961,4 +961,27 @@ section {
   }
 }
 
+.btn{
+  font-size: 18px;
+  padding: 10px 20px 10px 20px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  font-weight: 700;
+  color: white;
+  /* background: #27AE60; */
+  background: var(--color-secondary);
+  border: none;
+  transition: all 0.4s ease-in-out;
+}
+.btn:hover{
+  cursor: pointer;
+  border:  solid white 2px;
+  /* color: #27AE60; */
+  color: var(--color-secondary);
+  background: transparent;
+  transition: ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+
 /*# sourceMappingURL=styles.css.map */
