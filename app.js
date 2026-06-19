@@ -1,48 +1,72 @@
 (function () {
-  [...document.querySelectorAll(".control")].forEach((button) => {
-    button.addEventListener("click", function () {
-      document.querySelector(".active-btn").classList.remove("active-btn");
-      this.classList.add("active-btn");
-      document.querySelector(".active").classList.remove("active");
-      document.getElementById(button.dataset.id).classList.add("active");
+  const controls = [...document.querySelectorAll(".control")];
+  const containers = [...document.querySelectorAll(".container")];
+  const themeButton = document.querySelector(".theme-btn");
+  const contactForm = document.getElementById("contact-form");
+
+  function showSection(id) {
+    const nextSection = document.getElementById(id);
+
+    if (!nextSection) return;
+
+    document.querySelector(".active-btn")?.classList.remove("active-btn");
+    document.querySelector(`.control[data-id="${id}"]`)?.classList.add("active-btn");
+
+    containers.forEach((section) => {
+      section.classList.toggle("active", section.id === id);
     });
+  }
+
+  controls.forEach((button) => {
+    button.addEventListener("click", () => showSection(button.dataset.id));
   });
-  document.querySelector(".theme-btn").addEventListener("click", () => {
-    document.body.classList.toggle("light-mode");
-    
+
+  document.querySelectorAll("[data-jump]").forEach((button) => {
+    button.addEventListener("click", () => showSection(button.dataset.jump));
   });
-})();
 
+  themeButton?.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+  });
 
-
-document.getElementById('contact-form').addEventListener('submit', function(event) {
-  event.preventDefault(); // Prevent form from submitting
-  
-  // Get form values
-  var form = this;
-  var name = form['name'].value;
-  var email = form['email'].value;
-  var subject = form['subject'].value;
-  var message = form['message'].value;
-  
-
-  (function () {
+  if (window.emailjs) {
     emailjs.init("QFK_Wm-_p4DjEA4jB");
-})();
+  }
 
-  emailjs.send("service_87jsnri", "template_1j074vs", {
-      name: name,
-      email: email,
-      subject: subject,
-      message: message
-  }).then(function(response) {
-      console.log('Email sent:', response);
-      alert('Email sent successfully!');
-      form.reset(); 
-  }, function(error) {
-      console.error('Email failed to send:', error);
-      alert('Email failed to send. Please try again later.');
+  contactForm?.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    if (!window.emailjs) {
+      alert("Email service is loading. Please try again in a moment.");
+      return;
+    }
+
+    const form = this;
+    const submitButton = form.querySelector("button[type='submit']");
+    const originalLabel = submitButton.textContent;
+
+    submitButton.textContent = "Sending...";
+    submitButton.disabled = true;
+
+    emailjs
+      .send("service_87jsnri", "template_1j074vs", {
+        name: form.name.value,
+        email: form.email.value,
+        subject: form.subject.value,
+        message: form.message.value,
+      })
+      .then(
+        function () {
+          alert("Email sent successfully!");
+          form.reset();
+        },
+        function () {
+          alert("Email failed to send. Please try again later.");
+        }
+      )
+      .finally(function () {
+        submitButton.textContent = originalLabel;
+        submitButton.disabled = false;
+      });
   });
-});
-
-
+})();
